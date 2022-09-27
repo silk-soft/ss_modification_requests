@@ -11,4 +11,4 @@ def insert_data(self, check_in, check_out, employee_id):
         'check_out': check_out,
         'employee_id': employee_id
     }
-    self.env['hr.attendance'].create(attendance_val)
+    self.env['hr.attendance'].sudo().create(attendance_val)
