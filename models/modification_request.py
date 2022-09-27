@@ -37,8 +37,8 @@ class ModificationRequest (models.Model):
     old_value = fields.Datetime(string='Old Value', readonly=True, store=True)
     new_value = fields.Datetime(string='New Value', tracking=True, readonly=True
                                 , states={'draft': [('readonly', False)]})
-    check_in = fields.Datetime(string='Check In', store=True)
-    check_out = fields.Datetime(string='Check Out', store=True)
+    check_in = fields.Datetime(string='Check In', store=True, readonly=True, states={'draft': [('readonly', False)]})
+    check_out = fields.Datetime(string='Check Out', store=True, readonly=True, states={'draft': [('readonly', False)]})
     state = fields.Selection([('cancel', 'Rejected'), ('draft', 'Draft'), ('verify', 'Pending'),
                               ('approve', 'Approved'), ], string='Status'
                              , index=True, readonly=True, copy=False, default='draft',
@@ -111,7 +111,7 @@ class ModificationRequest (models.Model):
         if self.hr_responsible.partner_id:
             followers = [self.hr_responsible.partner_id.id]
             self.message_subscribe(followers, None)
-            self.message_post(subject=self.action_type+" Request"
+            self.message_post(subject=self.action_type.capitalize()+" Request"
                               , body="Hello "+self.hr_responsible.name+" please accept my request."
                               , partner_ids=followers)
 
@@ -127,7 +127,7 @@ class ModificationRequest (models.Model):
                 do_update(query.update_attendance_check_in, self.new_value, self.attendance_records.id)
             if self.fields_attendance == "check_out":
                 do_update(query.update_attendance_check_out, self.new_value, self.attendance_records.id)
-            self.name = self.attendance_records.employee_id.name + ' - ' + str(self.new_value.date())
+            self.name = self.sudo().attendance_records.employee_id.name + ' - ' + str(self.new_value.date())
         if self.action_type == "create":
             if not self.check_in or not self.check_out or not self.created_employee:
                 raise ValidationError('Make sure all required fields are filled.')
