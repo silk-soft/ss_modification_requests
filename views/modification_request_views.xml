@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="modification_request_form" model="ir.ui.view">
+            <field name="name">modification.request.form</field>
+            <field name="model">modification.request</field>
+            <field name="arch" type="xml">
+                <form string="Modification Request">
+                    <header>
+                        <button string="Submit" name="action_submit_request" type="object" states="draft" class="oe_highlight" groups="ss_modification_requests.group_modification_request_user,ss_modification_requests.group_modification_request_admin"/>
+                        <button string="Set to Draft" name="action_payslip_draft" type="object" states="cancel" groups="ss_modification_requests.group_modification_request_admin"/>
+                        <button string="Approve" name="action_approve" type="object" states="verify" class="oe_highlight" groups="ss_modification_requests.group_modification_request_admin"/>
+                        <button string="Refuse" name="action_refuse" type="object" states="verify" groups="ss_modification_requests.group_modification_request_admin"/>
+                        <field name="state" widget="statusbar" states="verify,approve" statusbar_visible="draft,verify,approve"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name" force_save="1"/>
+                            <field name="model"/>
+                            <field name="action_type" widget="radio" attrs="{'invisible': ('model', '==', True)}"/>
+                            <field name="fields_attendance" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'create')]}"/>
+                            <field name="attendance_records" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'create')],'required': [('action_type', '==', 'edit')]}" options='{"no_open": True, "no_create": True}'/>
+                            <field name="old_value" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'create')]}" force_save="1"/>
+                            <field name="new_value" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'create')],'required': [('action_type', '==', 'edit')]}"/>
+                            <field name="check_in" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'edit')],'required': [('action_type', '==', 'create')]}"/>
+                            <field name="check_out" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'edit')],'required': [('action_type', '==', 'create')]}"/>
+                            <field name="created_employee" force_save="1" attrs="{'invisible': ['|', ('model', '==', True), ('action_type', '==', 'edit')],'required': [('action_type', '==', 'edit')]}"/>
+                            <field name="comment"/>
+                            <field name="created_user"  invisible="1" force_save="1"/>
+                            <field name="hr_responsible" invisible="1" force_save="1"/>
+                            <field name="record_owner" invisible="1" force_save="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="modification_request_tree_view" model="ir.ui.view">
+            <field name="name">modification.request.tree.view</field>
+            <field name="model">modification.request</field>
+            <field name="arch" type="xml">
+                <tree string="Modification Request">
+                    <field name="name" force_save="1"/>
+                    <field name="record_owner" widget="many2one_avatar_employee" force_save="1"/>
+                    <field name="created_user" widget="many2one_avatar_user" force_save="1"/>
+                    <field name="hr_responsible" widget="many2one_avatar_user" force_save="1"/>
+                    <field name="model"/>
+                    <field name="action_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="modification_request_search_view" model="ir.ui.view">
+            <field name="name">modification.request.search.view</field>
+            <field name="model">modification.request</field>
+            <field name="arch" type="xml">
+                <search string="Modification Request">
+                    <filter string="My Requests" name="myrequest" domain="[('record_owner.user_id.id', '=', uid)]" />
+                    <field name="name"/>
+                    <field name="model"/>
+                    <field name="attendance_records"/>
+                    <field name="old_value"/>
+                    <field name="new_value"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_view_modification_request" model="ir.actions.act_window">
+            <field name="name">Modification Request</field>
+            <field name="res_model">modification.request</field>
+            <field name="context">{'search_default_myrequest':1}</field>
+            <field name="view_mode">tree,form,search</field>
+        </record>
+    </data>
+</odoo>

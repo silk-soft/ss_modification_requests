@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record model="ir.module.category" id="module_category_modification_request">
+            <field name="name">Modification Request</field>
+            <field name="description">Manage modification requests for non admin users.</field>
+            <field name="sequence">17</field>
+        </record>
+
+        <record id="group_modification_request_admin" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="category_id" ref="ss_modification_requests.module_category_modification_request"/>
+        </record>
+
+        <record id="group_modification_request_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id" ref="ss_modification_requests.module_category_modification_request"/>
+        </record>
+
+        <record id="ss_modification_requests_rule_user" model="ir.rule">
+            <field name="name">Modification Request : User</field>
+            <field name="model_id" ref="model_modification_request"/>
+            <field name="domain_force">[('record_owner.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="groups" eval="[(4,ref('ss_modification_requests.group_modification_request_user'))]"/>
+        </record>
+
+    </data>
+</odoo>

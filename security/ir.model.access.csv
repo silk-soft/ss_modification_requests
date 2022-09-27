@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_modification_request_admin,modification.request,model_modification_request,ss_modification_requests.group_modification_request_admin,1,1,1,0
+access_modification_request_user,modification.request,model_modification_request,ss_modification_requests.group_modification_request_user,1,1,1,0
+access_modification_request_superuser,modification.request,model_modification_request,base.group_erp_manager,1,1,1,1
