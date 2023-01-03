@@ -72,9 +72,10 @@ class ModificationRequest (models.Model):
                                                                            , self.fields_attendance).date())
         self.date = getattr(self.attendance_records, self.fields_attendance).date()
 
-    def compute_date(self):
+    def compute_date(self, space):
         for rec in self:
-            rec.date = dparser.parse(rec.name, fuzzy=True)
+            local_name = rec.name[space:]
+            rec.date = dparser.parse(local_name, fuzzy=True)
 
     def _compute_created_user(self):
         for rec in self:
