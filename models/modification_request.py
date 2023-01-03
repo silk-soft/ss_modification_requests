@@ -5,6 +5,7 @@ from odoo import models, fields, api
 from odoo.addons.ss_modification_requests.data.query import QueryList
 from odoo.addons.ss_modification_requests.data.function import *
 from odoo.exceptions import ValidationError
+import dateutil.parser as dparser
 
 
 class ModificationRequest (models.Model):
@@ -60,6 +61,7 @@ class ModificationRequest (models.Model):
                                        , copy=False, default=_default_record_owner, store=True)
     comment = fields.Text(String='Comment', help='Write down reasons if there\'s any', tracking=True, readonly=True
                           , states={'draft': [('readonly', False)]})
+    date = fields.Date(String='Request Date', required=True, tracking=True, readonly=True)
 
     @api.onchange('attendance_records', 'fields_attendance', 'new_value')
     def getting_old_value(self):
@@ -68,6 +70,11 @@ class ModificationRequest (models.Model):
         self.old_value = getattr(self.attendance_records, self.fields_attendance)
         self.name = self.attendance_records.employee_id.name + ' - ' + str(getattr(self.attendance_records
                                                                            , self.fields_attendance).date())
+        self.date = getattr(self.attendance_records, self.fields_attendance).date()
+
+    def compute_date(self):
+        for rec in self:
+            rec.date = dparser.parse(rec.name, fuzzy=True)
 
     def _compute_created_user(self):
         for rec in self:
@@ -93,6 +100,7 @@ class ModificationRequest (models.Model):
         if not self.created_employee or not self.check_in:
             return
         self.name = self.created_employee.name + ' - ' + str(self.check_in.date())
+        self.date = self.check_in.date()
 
     def action_submit_request(self):
         if self.action_type == "edit":
@@ -103,10 +111,12 @@ class ModificationRequest (models.Model):
                 if self.fields_attendance == "check_out":
                     if self.new_value < self.attendance_records.check_in:
                         raise ValidationError('Check out field can\'t be in a date before check in.')
+            self.date = self.new_value.date()
         elif self.action_type == "create":
             if self.check_in and self.check_out:
                 if self.check_in > self.check_out:
                     raise ValidationError('Check in field can\'t be in a date after check out.')
+            self.date = self.check_in.date()
         self.write({'state': 'verify'})
         if self.hr_responsible.partner_id:
             followers = [self.hr_responsible.partner_id.id]
