@@ -3,7 +3,7 @@
 
 {
     'name': 'SilkSoft Modification Requests',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.0.1',
     'category': 'Hidden/Tools',
     'summary': 'Modification Requests for Non Administrative Employees For Odoo 15',
     'sequence': '5',

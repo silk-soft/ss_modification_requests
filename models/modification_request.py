@@ -63,7 +63,7 @@ class ModificationRequest (models.Model):
     comment = fields.Text(String='Comment', help='Write down reasons if there\'s any', tracking=True, readonly=True
                           , states={'draft': [('readonly', False)]})
     date = fields.Date(String='Request Date', readonly=True)
-    active = fields.Boolean(String="Active", Default=True)
+    active = fields.Boolean(String="Active", default=True)
 
     @api.onchange('attendance_records', 'fields_attendance', 'new_value')
     def getting_old_value(self):
