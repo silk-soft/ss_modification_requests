@@ -7,5 +7,5 @@
         web_icon="ss_modification_requests,static/description/icon.png"
         action="action_view_modification_request"
         sequence="20"/>
-    <menuitem id="submenu_mr" name="Modifications" parent="menu_mr_root" action="action_view_modification_request" sequence="1" groups="group_modification_request_admin,group_modification_request_user"/>
+<!--    <menuitem id="submenu_mr" name="Modifications" parent="menu_mr_root" action="action_view_modification_request" sequence="1" groups="group_modification_request_admin,group_modification_request_user"/>-->
 </odoo>

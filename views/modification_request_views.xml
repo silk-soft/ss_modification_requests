@@ -61,6 +61,11 @@
             <field name="arch" type="xml">
                 <search string="Modification Request">
                     <filter string="My Requests" name="myrequest" domain="[('record_owner.user_id.id', '=', uid)]" />
+                    <filter string="Draft" name="draft_state" domain="[('state', '=', 'draft')]" />
+                    <filter string="Pending" name="pending_state" domain="[('state', '=', 'verify')]" />
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
                     <field name="name"/>
                     <field name="model"/>
                     <field name="attendance_records"/>

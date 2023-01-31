@@ -6,6 +6,7 @@ from odoo.addons.ss_modification_requests.data.query import QueryList
 from odoo.addons.ss_modification_requests.data.function import *
 from odoo.exceptions import ValidationError
 import dateutil.parser as dparser
+from odoo.addons.hr_attendance.models import hr_attendance
 
 
 class ModificationRequest (models.Model):
@@ -61,7 +62,8 @@ class ModificationRequest (models.Model):
                                        , copy=False, default=_default_record_owner, store=True)
     comment = fields.Text(String='Comment', help='Write down reasons if there\'s any', tracking=True, readonly=True
                           , states={'draft': [('readonly', False)]})
-    date = fields.Date(String='Request Date', required=True, tracking=True, readonly=True)
+    date = fields.Date(String='Request Date', readonly=True)
+    active = fields.Boolean(String="Active", Default=True)
 
     @api.onchange('attendance_records', 'fields_attendance', 'new_value')
     def getting_old_value(self):
@@ -138,6 +140,7 @@ class ModificationRequest (models.Model):
                 do_update(query.update_attendance_check_in, self.new_value, self.attendance_records.id)
             if self.fields_attendance == "check_out":
                 do_update(query.update_attendance_check_out, self.new_value, self.attendance_records.id)
+            hr_attendance.HrAttendance._compute_worked_hours(self.attendance_records)
             self.name = self.sudo().attendance_records.employee_id.name + ' - ' + str(self.new_value.date())
         if self.action_type == "create":
             if not self.check_in or not self.check_out or not self.created_employee:
