@@ -107,6 +107,8 @@ class ModificationRequest (models.Model):
 
     def action_submit_request(self):
         if self.action_type == "edit":
+            if not self.attendance_records.check_out:
+                raise ValidationError('You can\'t edit an attendance record that you didn\'t check out from.')
             if self.new_value and self.fields_attendance and self.attendance_records:
                 if self.fields_attendance == "check_in":
                     if self.new_value > self.attendance_records.check_out:
